@@ -42,9 +42,11 @@ This repository contains hands-on AWS labs I’ve completed to build real-world 
 ### S3 Bucket Policy (OAC)
 ![S3 Bucket Permissions](screenshots/s3-bucket-permissions-oac.png)
 
+### Site Live via CloudFront
+![Site Working](screenshots/site-working-browser.png)
 
-EC2 + Apache Web Server Lab
-Overview
+## EC2 + Apache Web Server Lab
+### Overview
 
 Launched an EC2 instance (Free Tier)
 Connected securely via SSH using key pairs
@@ -53,11 +55,9 @@ Exposed HTTP (port 80) publicly
 Restricted SSH (port 22) to my IP only
 Verified the site from a browser
 
-![EC2 Running](screenshots/ec2-running.png)
-![Security Group](screenshots/ec2-security-group.png)
-![Apache Status](screenshots/httpd-status.png)
-![Site Live](screenshots/site-working-browser.png)
+![EC2 Running](ec2-instance-live.png)
+![Security Group](security-inboundrules.png)
+![Apache Status](terminal-running.png)
+![Site Live](ec2-livesite.png)
 
 
-### Site Live via CloudFront
-![Site Working](screenshots/site-working-browser.png)
