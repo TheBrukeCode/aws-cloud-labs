@@ -57,16 +57,16 @@ Verified the site from a browser
 
 ### Screenshots
 
-### Live Instance
+### Live EC2 Instance
 ![EC2 Running](screenshots/ec2-instance-live.png)
 
-### Inbound Rules
+### Inbound Security Rules
 ![Security Group](screenshots/security-inboundrules.png)
 
-### Terminal Running
+### Apache Service Running
 ![Apache Status](screenshots/terminal-running.png)
 
-### Live Site
+### Website Live in Browser
 ![Site Live](screenshots/ec2-livesite.png)
 
 
