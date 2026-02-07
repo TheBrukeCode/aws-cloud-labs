@@ -55,9 +55,18 @@ Exposed HTTP (port 80) publicly
 Restricted SSH (port 22) to my IP only
 Verified the site from a browser
 
+### Screenshots
+
+### Live Instance
 ![EC2 Running](screenshots/ec2-instance-live.png)
+
+### Inbound Rules
 ![Security Group](screenshots/security-inboundrules.png)
+
+### Terminal Running
 ![Apache Status](screenshots/terminal-running.png)
+
+### Live Site
 ![Site Live](screenshots/ec2-livesite.png)
 
 
