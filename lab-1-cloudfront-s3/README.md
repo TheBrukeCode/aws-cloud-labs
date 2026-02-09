@@ -17,6 +17,7 @@ Origin Access Control (OAC).
 - IAM (OAC)
 
 ## Screenshots
+Lab 1 Screenshots.
 
 ### CloudFront Distribution Configuration
 ![CloudFront Settings](screenshots/cloudfront-settings.png)
