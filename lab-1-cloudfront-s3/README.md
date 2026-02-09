@@ -17,8 +17,17 @@ Origin Access Control (OAC).
 - IAM (OAC)
 
 ## Screenshots
-See the screenshots folder for CloudFront configuration, S3 permissions,
-and a working site in the browser.
+
+### CloudFront Distribution Configuration
+![CloudFront Settings](screenshots/cloudfront-settings.png)
+
+### S3 Bucket Permissions (OAC)
+![S3 Permissions](screenshots/s3-bucket-permissions-oac.png)
+
+### Live Site via CloudFront
+![Live Site](screenshots/site-working-browser.png)
+
+
 
 ## Exam Relevance (SAA-C03)
 - Secure content delivery
