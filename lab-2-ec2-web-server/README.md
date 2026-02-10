@@ -41,13 +41,13 @@ Demonstrates AWS best practice of using Security Groups for instance-level contr
 ### Screenshots
 
 ### Live EC2 Instance
-![EC2 Running](screenshots/ec2-instance-live.png)
+![EC2 Running](lab-2-ec2-web-server/screenshots/ec2-instance-live.png)
 
 ### Inbound Security Rules
-![Security Group](screenshots/security-inboundrules.png)
+![Security Group](lab-2-ec2-web-server/screenshots/security-inboundrules.png)
 
 ### Apache Service Running
-![Apache Status](screenshots/terminal-running.png)
+![Apache Status](lab-2-ec2-web-server/screenshots/terminal-running.png)
 
 ### Website Live in Browser
-![Site Live](screenshots/ec2-livesite.png)
+![Site Live](lab-2-ec2-web-server/screenshots/ec2-livesite.png)
