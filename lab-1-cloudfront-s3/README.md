@@ -20,7 +20,7 @@ Origin Access Control (OAC).
 Lab 1 Screenshots.
 
 ### CloudFront Distribution Configuration
-![CloudFront Settings](screenshots/cloudfront-settings.png)
+![CloudFront Settings](screenshots/cloudfront-general.png)
 
 ### S3 Bucket Permissions (OAC)
 ![S3 Permissions](screenshots/s3-bucket-permissions-oac.png)
