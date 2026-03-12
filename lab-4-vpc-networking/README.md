@@ -23,7 +23,7 @@ Bastion -->|SSH| PrivateEC2
 
 PrivateSubnet --> NAT[NAT Gateway]
 NAT --> Internet
-
+'''
 
 ---
 
