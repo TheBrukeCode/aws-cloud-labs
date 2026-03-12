@@ -2,6 +2,19 @@
 
 This project provisions a complete AWS VPC infrastructure including public and private subnets, internet access, NAT gateway, and EC2 instances demonstrating the Bastion Host pattern.
 
+## Skills Demonstrated
+
+- AWS VPC design
+- Public and private subnet architecture
+- Bastion host SSH pattern
+- NAT gateway for outbound private subnet traffic
+- Route tables and security groups
+- Infrastructure deployment with CloudFormation
+
+### Architecture Overview
+
+The diagram below illustrates the VPC network design used in this lab, including a public bastion host used to securely access a private EC2 instance within a private subnet.
+
 ---
 
 ## Architecture
