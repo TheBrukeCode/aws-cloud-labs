@@ -2,10 +2,27 @@
 
 This project provisions a complete AWS VPC infrastructure including public and private subnets, internet access, NAT gateway, and EC2 instances demonstrating the Bastion Host pattern.
 
+<<<<<<< HEAD
+=======
+## Skills Demonstrated
+
+- AWS VPC design
+- Public and private subnet architecture
+- Bastion host SSH pattern
+- NAT gateway for outbound private subnet traffic
+- Route tables and security groups
+- Infrastructure deployment with CloudFormation
+
+### Architecture Overview
+
+The diagram below illustrates the VPC network design used in this lab, including a public bastion host used to securely access a private EC2 instance within a private subnet.
+
+>>>>>>> 2fe2b28273c05d050398c0de6056a5be7a8c49c2
 ---
 
 ## Architecture
 
+<<<<<<< HEAD
 ```
 Internet
     │
@@ -41,6 +58,27 @@ Internet Gateway (igw)
 ```
 
 ---
+=======
+```mermaid
+flowchart TD
+
+Internet --> IGW[Internet Gateway]
+
+IGW --> VPC[VPC 10.0.0.0/16]
+
+VPC --> PublicSubnet[Public Subnet 10.0.1.0/24]
+PublicSubnet --> Bastion[Bastion Host EC2]
+
+VPC --> PrivateSubnet[Private Subnet 10.0.2.0/24]
+PrivateSubnet --> PrivateEC2[Private EC2 Instance]
+
+Bastion -->|SSH| PrivateEC2
+
+PrivateSubnet --> NAT[NAT Gateway]
+NAT --> Internet
+```
+
+>>>>>>> 2fe2b28273c05d050398c0de6056a5be7a8c49c2
 
 ## Resources Created
 
@@ -130,4 +168,8 @@ aws cloudformation delete-stack \
 - AWS VPC, EC2, CloudFormation
 - AWS CLI
 - YAML / Infrastructure as Code
+<<<<<<< HEAD
 - SSH / Bastion Host pattern
+=======
+- SSH / Bastion Host pattern
+>>>>>>> 2fe2b28273c05d050398c0de6056a5be7a8c49c2
