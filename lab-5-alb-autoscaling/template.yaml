@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Lab 5 - ALB with Auto Scaling
+
+Resources:
+
+  WebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP
+      VpcId: vpc-0f4ec77a99f7efa1b
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-0c02fb55956c7d316
+        InstanceType: t3.micro
+        SecurityGroupIds:
+          - !Ref WebSecurityGroup
+        UserData:
+          Fn::Base64: |
+            #!/bin/bash
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd
+            echo "Hello from $(hostname)" > /var/www/html/index.html
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      VpcId: vpc-0f4ec77a99f7efa1b
+      TargetType: instance
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Subnets:
+        - subnet-09980cc22c2973a9d
+        - subnet-06951e8c06e89082f
+      SecurityGroups:
+        - !Ref WebSecurityGroup
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MinSize: 2
+      MaxSize: 3
+      DesiredCapacity: 2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+      VPCZoneIdentifier:
+        - subnet-09980cc22c2973a9d
+        - subnet-06951e8c06e89082f
+      TargetGroupARNs:
+        - !Ref TargetGroup
