@@ -22,8 +22,8 @@ PrivateSubnet --> PrivateEC2[Private EC2 Instance]
 Bastion -->|SSH| PrivateEC2
 
 PrivateSubnet --> NAT[NAT Gateway]
-NAT --> Internet
-'''
+NAT --> Internet'''
+
 
 ---
 
