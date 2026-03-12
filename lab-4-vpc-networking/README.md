@@ -6,39 +6,24 @@ This project provisions a complete AWS VPC infrastructure including public and p
 
 ## Architecture
 
-```
-Internet
-    │
-    ▼
-Internet Gateway (igw)
-    │
-    ▼
-┌─────────────────────────────────────────┐
-│             VPC (LabVPC)                │
-│           CIDR: 10.0.0.0/16             │
-│                                         │
-│  ┌─────────────────────────────────┐    │
-│  │        Public Subnet            │    │
-│  │        10.0.1.0/24              │    │
-│  │   [lab-4-public-ec2]            │    │
-│  │   Public IP: 100.54.77.159      │    │
-│  │   Private IP: 10.0.1.221        │    │
-│  └──────────────┬──────────────────┘    │
-│                 │ SSH jump              │
-│                 ▼                       │
-│         NAT Gateway                     │
-│                 │                       │
-│  ┌──────────────▼──────────────────┐    │
-│  │        Private Subnet           │    │
-│  │        10.0.2.0/24              │    │
-│  │   [lab-4-private-ec2]           │    │
-│  │   Private IP: 10.0.2.211        │    │
-│  │   No public IP                  │    │
-│  └─────────────────────────────────┘    │
-│                                         │
-│  S3 Gateway Endpoint                    │
-└─────────────────────────────────────────┘
-```
+```mermaid
+flowchart TD
+
+Internet --> IGW[Internet Gateway]
+
+IGW --> VPC[VPC 10.0.0.0/16]
+
+VPC --> PublicSubnet[Public Subnet 10.0.1.0/24]
+PublicSubnet --> Bastion[Bastion Host EC2]
+
+VPC --> PrivateSubnet[Private Subnet 10.0.2.0/24]
+PrivateSubnet --> PrivateEC2[Private EC2 Instance]
+
+Bastion -->|SSH| PrivateEC2
+
+PrivateSubnet --> NAT[NAT Gateway]
+NAT --> Internet
+
 
 ---
 
