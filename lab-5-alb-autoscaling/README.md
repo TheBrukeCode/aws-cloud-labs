@@ -20,6 +20,26 @@ Auto Scaling Group
 ↓  
 EC2 Instances  
 
+---
+
+## Application Load Balancer
+
+![ALB](screenshots/lab5balancer.png)
+
+## Target Group
+
+![Target Group](screenshots/lab5targets.png)
+
+## Auto Scaling Group
+
+![Auto Scaling](screenshots/lab5asg.png)
+
+## EC2 Instances
+
+![EC2](screenshots/lab5instances.png)
+
+
+
 ## Resources Created
 
 | Resource | Purpose |
