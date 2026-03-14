@@ -4,14 +4,15 @@
 Deploys a security-hardened AWS environment using IAM least-privilege principles and audit logging.
 
 ## Architecture
+```mermaid
+graph TD
+    A[Developer] -->|Assumes Role| B[IAM Role: lab-6-ec2-role]
+    B -->|Attached via| C[EC2 Instance Profile]
+    C -->|Scoped Access Only| D[S3 App Bucket]
+    B -->|Least Privilege Policy| E[s3:GetObject / s3:PutObject / s3:ListBucket]
+    F[CloudTrail] -->|Logs All API Calls| G[S3 CloudTrail Logs Bucket]
+    H[Any AWS API Call] -->|Captured by| F
 ```
-IAM Role (least-privilege)
-        ↓
-EC2 Instance Profile → S3 Bucket (scoped access only)
-        ↓
-CloudTrail → S3 Logs Bucket (audit trail)
-```
-
 ## Resources Created
 | Resource | Purpose |
 |---|---|
