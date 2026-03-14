@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lab 9 - AWS Config Compliance & Drift Detection'
+
+Resources:
+
+  # S3 Bucket for Config recordings
+  ConfigBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'lab-9-config-recordings-${AWS::AccountId}'
+
+  # Bucket policy allowing Config to write
+  ConfigBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ConfigBucket
+      PolicyDocument:
+        Statement:
+          - Sid: AWSConfigBucketPermissionsCheck
+            Effect: Allow
+            Principal:
+              Service: config.amazonaws.com
+            Action: s3:GetBucketAcl
+            Resource: !GetAtt ConfigBucket.Arn
+          - Sid: AWSConfigBucketDelivery
+            Effect: Allow
+            Principal:
+              Service: config.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub '${ConfigBucket.Arn}/AWSLogs/${AWS::AccountId}/Config/*'
+            Condition:
+              StringEquals:
+                s3:x-amz-acl: bucket-owner-full-control
+
+  # IAM Role for Config
+  ConfigRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: lab-9-config-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: config.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWS_ConfigRole
+
+  # SNS Topic for compliance alerts
+  ComplianceAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: lab-9-compliance-alerts
+      DisplayName: 'AWS Config Compliance Alerts'
+
+  # Config Recorder
+  ConfigRecorder:
+    Type: AWS::Config::ConfigurationRecorder
+    Properties:
+      Name: lab-9-recorder
+      RoleARN: !GetAtt ConfigRole.Arn
+      RecordingGroup:
+        AllSupported: true
+        IncludeGlobalResourceTypes: true
+
+  # Config Delivery Channel
+  ConfigDeliveryChannel:
+    Type: AWS::Config::DeliveryChannel
+    Properties:
+      Name: lab-9-delivery-channel
+      S3BucketName: !Ref ConfigBucket
+
+  # Config Rule - S3 buckets must not be public
+  S3PublicAccessRule:
+    Type: AWS::Config::ConfigRule
+    DependsOn: ConfigRecorder
+    Properties:
+      ConfigRuleName: lab-9-s3-no-public-access
+      Description: 'Checks that S3 buckets do not allow public access'
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_BUCKET_PUBLIC_READ_PROHIBITED
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+
+  # Config Rule - IAM password policy must be strong
+  IAMPasswordPolicyRule:
+    Type: AWS::Config::ConfigRule
+    DependsOn: ConfigRecorder
+    Properties:
+      ConfigRuleName: lab-9-iam-password-policy
+      Description: 'Checks that IAM password policy requires minimum length of 14'
+      Source:
+        Owner: AWS
+        SourceIdentifier: IAM_PASSWORD_POLICY
+      InputParameters:
+        MinimumPasswordLength: '14'
+        RequireUppercaseCharacters: 'true'
+        RequireLowercaseCharacters: 'true'
+        RequireNumbers: 'true'
+        RequireSymbols: 'true'
+
+  # Config Rule - Root account must have MFA
+  RootMFARule:
+    Type: AWS::Config::ConfigRule
+    DependsOn: ConfigRecorder
+    Properties:
+      ConfigRuleName: lab-9-root-mfa-enabled
+      Description: 'Checks that root account has MFA enabled'
+      Source:
+        Owner: AWS
+        SourceIdentifier: ROOT_ACCOUNT_MFA_ENABLED
+
+Outputs:
+  ConfigBucketName:
+    Value: !Ref ConfigBucket
+  ComplianceAlertTopicArn:
+    Value: !Ref ComplianceAlertTopic
+  ConfigRecorderName:
+    Value: !Ref ConfigRecorder
