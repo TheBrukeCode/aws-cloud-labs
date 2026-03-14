@@ -34,7 +34,9 @@ graph TD
 - **Defense in Depth** - Multiple rule layers mean attackers must bypass all of them
 
 ## Live Test Result
-SQL injection attack `?id=1'+OR+'1'='1` returned `403 Forbidden` — blocked by WAF before reaching the ALB.
+SQL injection attack `?id=1'+OR+'1'='1` returned `403 Forbidden` — blocked by WAF.
+
+![WAF Blocking SQL Injection](screenshots/waf-blocked-sqli.png)
 
 ## Deployment
 ```bash
