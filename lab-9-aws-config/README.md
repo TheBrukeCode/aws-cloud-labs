@@ -54,5 +54,5 @@ aws cloudformation deploy \
 aws configservice describe-compliance-by-config-rule \
   --query 'ComplianceByConfigRules[*].[ConfigRuleName,Compliance.ComplianceType]' \
   --output table
-  ![AWS Config Compliance Dashboard](screenshots/config-compliance.png)
+  ![AWS Config Compliance Dashboard](screenshots/Lab9Config.png)
 ```
