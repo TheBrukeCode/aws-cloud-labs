@@ -7,12 +7,12 @@ Built a secure EC2 management pipeline using AWS Systems Manager, eliminating th
 ```mermaid
 graph TD
     A[EC2 Instance] -->|SSM Agent| B[Systems Manager]
-    B --> C[Session Manager - Browser Terminal]
-    B --> D[Parameter Store - Secure Config]
-    B --> E[Patch Manager - Compliance]
-    B --> F[Fleet Manager - Inventory]
-    D --> G[/lab11/app/config]
-    D --> H[/lab11/db/password]
+    B --> C[Session Manager]
+    B --> D[Parameter Store]
+    B --> E[Patch Manager]
+    B --> F[Fleet Manager]
+    D --> G[app/config]
+    D --> H[db/password]
 ```
 
 ## Resources Created
