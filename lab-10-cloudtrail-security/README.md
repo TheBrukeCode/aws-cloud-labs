@@ -37,3 +37,19 @@ aws cloudformation deploy \
   --stack-name lab10-cloudtrail-monitoring \
   --capabilities CAPABILITY_NAMED_IAM
 ```
+## Screenshots
+
+### CloudFormation Stack
+![CloudFormation](screenshots/lab10cloudformation.png)
+
+### CloudTrail Active
+![CloudTrail](screenshots/lab10cloudtrail.png)
+
+### CloudWatch Alarm
+![CloudWatch](screenshots/lab10cloudwatch.png)
+
+### SNS Topic
+![SNS](screenshots/lab10SNS.png)
+
+### Security Trail
+![Security Trail](screenshots/lab10securitytrail.png)
