@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lab 10 - GuardDuty Threat Detection + Security Hub'
+
+Resources:
+
+  # Enable GuardDuty
+  GuardDutyDetector:
+    Type: AWS::GuardDuty::Detector
+    Properties:
+      Enable: true
+      FindingPublishingFrequency: FIFTEEN_MINUTES
+
+  # SNS Topic for threat alerts
+  ThreatAlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: lab-10-threat-alerts
+      DisplayName: 'GuardDuty Threat Alerts'
+
+  # SNS Topic Policy
+  ThreatAlertTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref ThreatAlertTopic
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref ThreatAlertTopic
+
+  # EventBridge Rule - triggers on any GuardDuty finding
+  GuardDutyFindingRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: lab-10-guardduty-findings
+      Description: 'Trigger SNS alert on any GuardDuty finding'
+      EventPattern:
+        source:
+          - aws.guardduty
+        detail-type:
+          - GuardDuty Finding
+      State: ENABLED
+      Targets:
+        - Arn: !Ref ThreatAlertTopic
+          Id: ThreatAlertTarget
+
+  # Enable Security Hub
+  SecurityHub:
+    Type: AWS::SecurityHub::Hub
+    Properties:
+      Tags:
+        Lab: lab-10
+
+Outputs:
+  GuardDutyDetectorId:
+    Value: !Ref GuardDutyDetector
+  ThreatAlertTopicArn:
+    Value: !Ref ThreatAlertTopic
+  SecurityHubArn:
+    Value: !Ref SecurityHub
+    
