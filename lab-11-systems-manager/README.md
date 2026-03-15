@@ -53,7 +53,7 @@ aws cloudformation deploy \
 ![Fleet Manager](screenshots/lab11fleetmanager.png)
 
 ### Session Manager - Browser Terminal
-![Session Manager](screenshots/lab11sessionmanager.png)
+![Session Manager](screenshots/lab11terminal.png)
 
 ### Parameter Store
 ![Parameter Store](screenshots/lab11parameterstore.png)
