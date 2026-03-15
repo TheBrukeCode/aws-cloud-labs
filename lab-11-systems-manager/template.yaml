@@ -1,0 +1,166 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Lab 11 - AWS Systems Manager Security Lab'
+
+Parameters:
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
+
+Resources:
+
+  # IAM Role for EC2 to use SSM
+  SSMInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: SSMInstanceRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonSSMPatchAssociation
+
+  SSMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref SSMInstanceRole
+
+  # VPC and Networking
+  LabVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: SSM-Lab-VPC
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref LabVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs '']
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: SSM-Public-Subnet
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  IGWAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref LabVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref LabVPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: IGWAttachment
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SubnetRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref RouteTable
+
+  # Security Group - no SSH needed!
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SSM Lab - No inbound SSH required
+      VpcId: !Ref LabVPC
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+
+  # EC2 Instance managed by SSM
+  SSMInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: !Ref LatestAmiId
+      IamInstanceProfile: !Ref SSMInstanceProfile
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref PublicSubnet
+          GroupSet:
+            - !Ref InstanceSecurityGroup
+      Tags:
+        - Key: Name
+          Value: SSM-Managed-Instance
+        - Key: PatchGroup
+          Value: Lab-Patch-Group
+
+  # Parameter Store - secure config storage
+  AppConfigParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /lab11/app/config
+      Type: String
+      Value: 'Lab11-SSM-Config-Value'
+      Description: Sample application config parameter
+
+  DBPasswordParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /lab11/db/password
+      Type: String
+      Value: 'placeholder-rotate-this'
+      Description: Sample DB password placeholder
+
+  # Patch Baseline
+  PatchBaseline:
+    Type: AWS::SSM::PatchBaseline
+    Properties:
+      Name: Lab11-PatchBaseline
+      OperatingSystem: AMAZON_LINUX_2023
+      ApprovalRules:
+        PatchRules:
+          - ApproveAfterDays: 7
+            ComplianceLevel: HIGH
+            PatchFilterGroup:
+              PatchFilters:
+                - Key: CLASSIFICATION
+                  Values:
+                    - Security
+                    - Bugfix
+                    - Enhancement
+
+  # Patch Group Association
+  PatchAssociation:
+    Type: AWS::SSM::Association
+    Properties:
+      Name: AWS-RunPatchBaseline
+      Targets:
+        - Key: tag:PatchGroup
+          Values:
+            - Lab-Patch-Group
+      Parameters:
+        Operation:
+          - Scan
+
+Outputs:
+  InstanceId:
+    Description: SSM Managed Instance ID
+    Value: !Ref SSMInstance
+  ParameterStorePath:
+    Description: Parameter Store base path
+    Value: /lab11/
